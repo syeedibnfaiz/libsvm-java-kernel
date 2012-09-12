@@ -4,6 +4,7 @@
 #that produced by the original tool
 
 #generate output
+#note that the Demo uses the linear kernel
 java -cp dist/libsvm-java.jar Demo a1a.train a1a.test a1a.out
 
 #download libsvm
@@ -13,7 +14,7 @@ tar xzf libsvm.tar.gz
 rm libsvm.tar.gz
 cd libsvm*
 make
-#generate output
+#generate output using the linear kernel
 ./svm-train -t 0 ../a1a.train a1a.train.model
 ./svm-predict ../a1a.test a1a.train.model a1a.out
 cd ..
