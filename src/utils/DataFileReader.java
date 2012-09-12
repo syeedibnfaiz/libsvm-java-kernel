@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import libsvm.Instance;
-import libsvm.svm_node;
-import libsvm.svm_problem;
 
 /**
  * <code>DataFileReader</code> reads data files written in LibSVM format.
@@ -15,16 +13,21 @@ import libsvm.svm_problem;
  */
 public class DataFileReader {
     
-    public static Instance[] readDataFile(String filePath) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        String line;
+    public static Instance[] readDataFile(String fileName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));        
+        
         ArrayList<Double> labels = new ArrayList<Double>();
         ArrayList<SparseVector> vectors = new ArrayList<SparseVector>();
         
+        String line;
+        int lineCount = 0;
         while ((line = reader.readLine()) != null) {
+            lineCount++;
             String[] tokens = line.split("\\s+");
-            if (tokens.length < 2) {
-                throw new RuntimeException("Inappropriate data file.");
+            if (tokens.length < 2) {                
+                System.err.println("Inappropriate file format: " + fileName);
+                System.err.println("Error in line " + lineCount);
+                System.exit(-1);
             }
             
             labels.add(Double.parseDouble(tokens[0]));            
@@ -33,7 +36,9 @@ public class DataFileReader {
             for (int i = 1; i < tokens.length; i++) {
                 String[] fields = tokens[i].split(":");
                 if (fields.length < 2) {
-                    throw new RuntimeException("Inappropriate data file.");
+                    System.err.println("Inappropriate file format: " + fileName);
+                    System.err.println("Error in line " + lineCount);
+                    System.exit(-1);
                 }
                 int index = Integer.parseInt(fields[0]);
                 double value = Double.parseDouble(fields[1]);
