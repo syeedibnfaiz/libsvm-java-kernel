@@ -3,12 +3,19 @@ package kernel;
 import datastruct.SparseVector;
 import libsvm.svm_node;
 import datastruct.SparseVector.Element;
+import libsvm.svm_parameter;
 
 /**
- *  <code>LinearKernel</code> implements a linear kernel function.
+ *  <code>RBFKernel</code> implements an RBF kernel.
  * @author Syeed Ibn Faiz
  */
-public class LinearKernel implements CustomKernel {
+public class RBFKernel implements CustomKernel {
+
+    svm_parameter param;
+    public RBFKernel(svm_parameter param) {
+        this.param = param;
+    }
+    
 
     @Override
     public double evaluate(svm_node x, svm_node y) {                        
@@ -27,17 +34,33 @@ public class LinearKernel implements CustomKernel {
             Element e2 = v2.get(j);
             
             if (e1.index == e2.index) {
-                result += e1.value * e2.value;
+                double d = e1.value - e2.value;
+                result += d * d;
                 i++;
                 j++;
             } else if (e1.index < e2.index) {
+                result += e1.value * e1.value;
                 i++;
             } else {
+                result += e2.value * e2.value;
                 j++;
             }            
         }
-                
-        return result;
+        
+        while (i < v1.size()) {
+            Element e1 = v1.get(i);
+            result += e1.value * e1.value;
+            i++;
+        }
+        
+        while (j < v2.size()) {
+            Element e2 = v2.get(j);
+            result += e2.value * e2.value;
+            j++;
+        }
+        
+        //System.out.println("score: " + result);
+        return Math.exp(-param.gamma * result);
     }
     
 }

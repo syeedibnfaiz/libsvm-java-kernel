@@ -173,7 +173,7 @@ abstract class Kernel extends QMatrix {
     private final int degree;
     private final double gamma;
     private final double coef0;
-
+    
     abstract float[] get_Q(int column, int len);
 
     abstract double[] get_QD();
@@ -206,7 +206,7 @@ abstract class Kernel extends QMatrix {
     }
 
     double kernel_function(int i, int j) {
-        //return (-gamma * edit(x[i][0].s, x[j][0].s));
+        //return (-gamma * edit(x[i][0].s, x[j][0].s));        
         return KernelManager.getCustomKernel().evaluate(x[i], x[j]);        
     }
 
@@ -217,7 +217,7 @@ abstract class Kernel extends QMatrix {
         this.coef0 = param.coef0;
 
         x = (svm_node[]) x_.clone();
-        
+                
     }
    
 
@@ -244,7 +244,7 @@ abstract class Kernel extends QMatrix {
 
     static double k_function(svm_node x, svm_node y,
             svm_parameter param) {
-        //return (-param.gamma * edit(x[0].s, y[0].s));        
+        //return (-param.gamma * edit(x[0].s, y[0].s));                
         return KernelManager.getCustomKernel().evaluate(x, y);
     }
 }

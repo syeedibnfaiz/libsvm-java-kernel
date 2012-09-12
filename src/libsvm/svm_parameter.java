@@ -29,6 +29,7 @@ public class svm_parameter implements Cloneable, java.io.Serializable {
     public int shrinking;	// use the shrinking heuristics
     public int probability; // do probability estimates
 
+    
     public svm_parameter() {
         svm_type = svm_parameter.C_SVC;
         kernel_type = svm_parameter.CUSTOM;
@@ -44,7 +45,7 @@ public class svm_parameter implements Cloneable, java.io.Serializable {
         probability = 0;
         nr_weight = 0;
         weight_label = new int[0];
-        weight = new double[0];
+        weight = new double[0];        
     }
         
     public Object clone() {

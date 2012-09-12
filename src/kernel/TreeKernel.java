@@ -1,12 +1,13 @@
 package kernel;
 
-import edu.stanford.nlp.trees.Tree;
+//import edu.stanford.nlp.trees.Tree;
+import datastruct.Tree;
 import java.util.ArrayList;
 import java.util.List;
 import libsvm.svm_node;
 
 /**
- * <code>TreeKernel</code> implements the kernel function described in
+ * <code>TreeKernel</code> provides a naive implementation of the kernel function described in
  * 'Parsing with a single neuron: Convolution kernels for NLP problems'.
  * @author Syeed Ibn Faiz
  */
@@ -127,8 +128,5 @@ public class TreeKernel implements CustomKernel {
         for (Tree child : childList) {
             addNodes(child, nodes);
         }
-    }
-
-   
-    
+    }      
 }

@@ -1,7 +1,7 @@
 package libsvm;
 
-
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -9,24 +9,33 @@ import java.io.IOException;
  */
 public class SVMPredictor {
 
+    public static double[] predict(List<Instance> instances, svm_model model) {
+        return predict(instances, model, true);
+    }
 
-    public static double[] predict(Instance[] instances, svm_model model) {
+    public static double[] predict(List<Instance> instances, svm_model model, boolean displayResult) {
+        Instance[] array = new Instance[instances.size()];
+        array = instances.toArray(array);
+        return predict(array, model, displayResult);
+    }
+
+    public static double[] predict(Instance[] instances, svm_model model, boolean displayResult) {
         int total = 0;
         int correct = 0;
-        
+
         int tp = 0;
         int fp = 0;
         int fn = 0;
-        
+
         boolean binary = model.nr_class == 2;
         double[] predictions = new double[instances.length];
         int count = 0;
-        
+
         for (Instance instance : instances) {
-            double target = instance.getLabel();                                    
+            double target = instance.getLabel();
             double p = svm.svm_predict(model, new svm_node(instance.getData()));
             predictions[count++] = p;
-            
+
             ++total;
             if (p == target) {
                 correct++;
@@ -39,21 +48,21 @@ public class SVMPredictor {
                 fp++;
             }
         }
-        
-        System.out.print("Accuracy = " + (double) correct / total * 100
-                + "% (" + correct + "/" + total + ") (classification)\n");
-        
-        if (binary) {
-            double precision = (double)tp/(tp+fp);
-            double recall = (double)tp/(tp+fn);
-            System.out.println("Precision: " + precision);
-            System.out.println("Recall: " + recall);
-            System.out.println("Fscore: " + 2*precision*recall/(precision + recall));
+        if (displayResult) {
+            System.out.print("Accuracy = " + (double) correct / total * 100
+                    + "% (" + correct + "/" + total + ") (classification)\n");
+
+            if (binary) {
+                double precision = (double) tp / (tp + fp);
+                double recall = (double) tp / (tp + fn);
+                System.out.println("Precision: " + precision);
+                System.out.println("Recall: " + recall);
+                System.out.println("Fscore: " + 2 * precision * recall / (precision + recall));
+            }
         }
-        
         return predictions;
     }
-    
+
     public static svm_model load_model(String filePath) throws IOException, ClassNotFoundException {
         return svm.svm_load_model(filePath);
     }

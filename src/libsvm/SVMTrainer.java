@@ -2,6 +2,8 @@ package libsvm;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <code>SVMTrainer</code> performs training of an SVM.
@@ -9,15 +11,25 @@ import java.io.IOException;
  */
 public class SVMTrainer {
     
+    private static svm_problem prepareProblem(List<Instance> instances) {
+        Instance[] array = new Instance[instances.size()];
+        array = instances.toArray(array);
+        return prepareProblem(array);
+    }
+    
     private static svm_problem prepareProblem(Instance[] instances) {
+        return prepareProblem(instances, 0, instances.length - 1);
+    }
+    
+    private static svm_problem prepareProblem(Instance[] instances, int begin, int end) {
         svm_problem prob = new svm_problem();
-        prob.l = instances.length;
+        prob.l = (end - begin) + 1;
         prob.y = new double[prob.l];
         prob.x = new svm_node[prob.l];
         
-        for (int i = 0; i < prob.l; i++) {
-            prob.y[i] = instances[i].getLabel();
-            prob.x[i] = new svm_node(instances[i].getData());
+        for (int i = begin; i <= end; i++) {
+            prob.y[i-begin] = instances[i].getLabel();
+            prob.x[i-begin] = new svm_node(instances[i].getData());
         }
         return prob;
     }
@@ -40,6 +52,12 @@ public class SVMTrainer {
         }
                 
         return svm.svm_train(prob, param);
+    }
+    
+    public static svm_model train(List<Instance> instances, svm_parameter param) {
+        Instance[] array = new Instance[instances.size()];
+        array = instances.toArray(array);
+        return train(array, param);
     }
     
     /**
@@ -103,6 +121,60 @@ public class SVMTrainer {
         }
     }
         
+    public static void doInOrderCrossValidation(Instance[] instances, svm_parameter param, int nr_fold, boolean binary) {        
+        int size = instances.length;
+        int chunkSize = size/nr_fold;
+        int begin = 0;
+        int end = chunkSize - 1;
+        int tp = 0;
+        int fp = 0;
+        int fn = 0;
+        int total = 0;
+        
+        for (int i = 0; i < nr_fold; i++) {
+            System.out.println("Iteration: " + (i+1));
+            List<Instance> trainingInstances = new ArrayList<Instance>();
+            List<Instance> testingInstances = new ArrayList<Instance>();
+            for (int j = 0; j < size; j++) {
+                if (j >= begin && j <= end) {
+                    testingInstances.add(instances[j]);
+                } else {
+                    trainingInstances.add(instances[j]);
+                }
+            }                                    
+            
+            svm_model trainModel = train(trainingInstances, param);
+            double[] predictions = SVMPredictor.predict(testingInstances, trainModel);
+            for (int k = 0; k < predictions.length; k++) {
+                
+                if (predictions[k] == testingInstances.get(k).getLabel()) {
+                //if (Math.abs(predictions[k] - testingInstances.get(k).getLabel()) < 0.00001) {
+                    if (testingInstances.get(k).getLabel() > 0) {
+                        tp++;
+                    }
+                } else if (testingInstances.get(k).getLabel() > 0) {
+                    fn++;
+                } else if (testingInstances.get(k).getLabel() < 0) {
+                    //System.out.println(testingInstances.get(k).getData());
+                    fp++;
+                }
+                total++;
+            }
+            //update
+            begin = end+1;
+            end = begin + chunkSize - 1;
+            if (end >= size) {
+                end = size-1;
+            }
+        }
+        
+        double precision = (double) tp / (tp + fp);
+        double recall = (double) tp / (tp + fn);
+        System.out.println("Precision: " + precision);
+        System.out.println("Recall: " + recall);
+        System.out.println("FScore: " + 2 * precision * recall / (precision + recall));
+    }
+    
     public static void saveModel(svm_model model, String filePath) throws IOException {
         svm.svm_save_model(filePath, model);
     }

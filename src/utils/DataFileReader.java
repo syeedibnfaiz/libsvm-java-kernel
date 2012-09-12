@@ -1,6 +1,6 @@
 package utils;
 
-import kernel.ds.SparseVector;
+import datastruct.SparseVector;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import libsvm.svm_node;
 import libsvm.svm_problem;
 
 /**
- *
+ * <code>DataFileReader</code> reads data files written in LibSVM format.
  * @author Syeed Ibn Faiz
  */
 public class DataFileReader {
