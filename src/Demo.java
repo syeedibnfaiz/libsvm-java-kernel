@@ -2,13 +2,13 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import kernel.KernelManager;
-import kernel.LinearKernel;
-import libsvm.Instance;
-import libsvm.SVMPredictor;
-import libsvm.SVMTrainer;
-import libsvm.svm_model;
-import libsvm.svm_parameter;
+import ca.uwo.csd.ai.nlp.kernel.KernelManager;
+import ca.uwo.csd.ai.nlp.kernel.LinearKernel;
+import ca.uwo.csd.ai.nlp.libsvm.ex.Instance;
+import ca.uwo.csd.ai.nlp.libsvm.ex.SVMPredictor;
+import ca.uwo.csd.ai.nlp.libsvm.ex.SVMTrainer;
+import ca.uwo.csd.ai.nlp.libsvm.svm_model;
+import ca.uwo.csd.ai.nlp.libsvm.svm_parameter;
 import utils.DataFileReader;
 
 /**
