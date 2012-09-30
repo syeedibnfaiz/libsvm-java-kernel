@@ -28,8 +28,7 @@ public class SVMPredictor {
     
     public static double predictProbability(Instance instance, svm_model model, double[] probabilities) {
         return svm.svm_predict_probability(model, new svm_node(instance.getData()), probabilities);
-    }
-    
+    }    
     public static double[] predict(Instance[] instances, svm_model model, boolean displayResult) {
         int total = 0;
         int correct = 0;
